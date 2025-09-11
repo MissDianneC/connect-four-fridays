@@ -1,14 +1,41 @@
 import GameBoard from '@/components/ConnectFour/GameBoard';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-background py-8 px-4">
       <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-black bg-gradient-primary bg-clip-text text-transparent mb-4">
-            Connect Four Fridays 🎉
-          </h1>
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex-1" />
+            <div className="flex-1">
+              <h1 className="text-5xl md:text-7xl font-black bg-gradient-primary bg-clip-text text-transparent mb-4">
+                Connect Four Fridays 🎉
+              </h1>
+            </div>
+            <div className="flex-1 flex justify-end">
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Welcome, {user?.email}!
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          </div>
           <p className="text-xl md:text-2xl text-muted-foreground font-medium">
             Drop discs and connect four in a row to win!
           </p>
