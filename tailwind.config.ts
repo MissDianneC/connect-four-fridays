@@ -22,11 +22,17 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          glow: "hsl(var(--secondary-glow))",
         },
+        "player-1": "hsl(var(--player-1))",
+        "player-2": "hsl(var(--player-2))",
+        "board-bg": "hsl(var(--board-bg))",
+        "cell-empty": "hsl(var(--cell-empty))",
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -57,6 +63,23 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-secondary": "var(--gradient-secondary)",
+        "gradient-background": "var(--gradient-background)",
+        "gradient-board": "var(--gradient-board)",
+      },
+      boxShadow: {
+        "primary": "var(--shadow-primary)",
+        "secondary": "var(--shadow-secondary)",
+        "card": "var(--shadow-card)",
+        "glow-primary": "var(--glow-primary)",
+        "glow-secondary": "var(--glow-secondary)",
+      },
+      transitionTimingFunction: {
+        "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+        "smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
       },
       borderRadius: {
         lg: "var(--radius)",
