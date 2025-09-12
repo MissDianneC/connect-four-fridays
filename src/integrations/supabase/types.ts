@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      games: {
+        Row: {
+          board_state: Json
+          created_at: string
+          current_turn: string | null
+          id: string
+          player1_id: string
+          player2_id: string | null
+          status: string
+          updated_at: string
+          winner: string | null
+          winning_cells: Json | null
+        }
+        Insert: {
+          board_state?: Json
+          created_at?: string
+          current_turn?: string | null
+          id?: string
+          player1_id: string
+          player2_id?: string | null
+          status?: string
+          updated_at?: string
+          winner?: string | null
+          winning_cells?: Json | null
+        }
+        Update: {
+          board_state?: Json
+          created_at?: string
+          current_turn?: string | null
+          id?: string
+          player1_id?: string
+          player2_id?: string | null
+          status?: string
+          updated_at?: string
+          winner?: string | null
+          winning_cells?: Json | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
