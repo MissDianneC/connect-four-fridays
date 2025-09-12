@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 interface GameInvite {
   id: string;
   player1_id: string;
+  player2_id: string;
   status: string;
   player1_profile?: {
     username: string | null;
@@ -34,11 +35,12 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
         .select(`
           id,
           player1_id,
+          player2_id,
           status,
           profiles:player1_id (username)
         `)
         .eq('status', 'waiting')
-        .neq('player1_id', user.id);
+        .eq('player2_id', user.id);
 
       if (data && !error) {
         setInvites(data.map(game => ({
@@ -68,14 +70,12 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
     };
   }, [user]);
 
-  const handleJoinGame = async (gameId: string) => {
+  const handleAcceptInvite = async (gameId: string) => {
     if (!user) return;
 
     const { error } = await supabase
       .from('games')
       .update({
-        player2_id: user.id,
-        current_turn: user.id, // Player 2 starts as yellow (second player)
         status: 'playing'
       })
       .eq('id', gameId);
@@ -83,14 +83,14 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
     if (error) {
       toast({
         title: "Error",
-        description: "Failed to join game. Please try again.",
+        description: "Failed to accept invite. Please try again.",
         variant: "destructive",
       });
     } else {
       onJoinGame(gameId);
       toast({
-        title: "Game joined!",
-        description: "You've joined the game as Player 2 (Yellow).",
+        title: "Game started!",
+        description: "Let the game begin!",
       });
     }
   };
@@ -107,31 +107,32 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
     <Card className="p-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Open Games</h3>
-          <Badge variant="secondary">{invites.length} available</Badge>
+          <h3 className="text-lg font-semibold">Game Invites</h3>
+          <Badge variant="secondary">{invites.length} pending</Badge>
         </div>
         
         {invites.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
-            No open games available. Create one or wait for invitations!
+            No pending invites. Wait for friends to invite you to games!
           </p>
         ) : (
           <div className="space-y-3">
             {invites.map((invite) => (
-              <div key={invite.id} className="flex items-center justify-between p-3 border rounded-lg">
+              <div key={invite.id} className="flex items-center justify-between p-3 border rounded-lg bg-primary/5">
                 <div className="space-y-1">
                   <p className="font-medium">
-                    Game by {invite.player1_profile?.username || 'Anonymous'}
+                    {invite.player1_profile?.username || 'Anonymous'} invited you!
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Waiting for Player 2
+                    Waiting for your response
                   </p>
                 </div>
                 <Button 
                   size="sm"
-                  onClick={() => handleJoinGame(invite.id)}
+                  onClick={() => handleAcceptInvite(invite.id)}
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
-                  Join Game
+                  Accept Invite
                 </Button>
               </div>
             ))}

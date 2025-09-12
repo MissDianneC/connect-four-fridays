@@ -55,6 +55,7 @@ export const LobbyScreen = ({ onStartGame }: LobbyScreenProps) => {
       .from('games')
       .insert({
         player1_id: user.id,
+        player2_id: userId,
         current_turn: user.id,
         status: 'waiting'
       })
@@ -70,10 +71,9 @@ export const LobbyScreen = ({ onStartGame }: LobbyScreenProps) => {
         variant: "destructive",
       });
     } else if (data) {
-      onStartGame(data.id);
       toast({
-        title: "Game created!",
-        description: `Game invitation sent to ${username}. Waiting for them to join...`,
+        title: "Invitation sent!",
+        description: `Game invitation sent to ${username}. They will see it in their lobby.`,
       });
     }
   };
