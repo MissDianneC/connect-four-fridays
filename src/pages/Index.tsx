@@ -1,12 +1,26 @@
-import GameBoard from '@/components/ConnectFour/GameBoard';
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { LobbyScreen } from '@/components/Lobby/LobbyScreen';
+import MultiplayerGameBoard from '@/components/ConnectFour/MultiplayerGameBoard';
 
 const Index = () => {
   const { user, signOut } = useAuth();
+  const [currentGameId, setCurrentGameId] = useState<string | null>(null);
+  const [showGame, setShowGame] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const handleStartGame = (gameId: string) => {
+    setCurrentGameId(gameId);
+    setShowGame(true);
+  };
+
+  const handleBackToLobby = () => {
+    setShowGame(false);
+    setCurrentGameId(null);
   };
 
   return (
@@ -37,12 +51,19 @@ const Index = () => {
             </div>
           </div>
           <p className="text-xl md:text-2xl text-muted-foreground font-medium">
-            Drop discs and connect four in a row to win!
+            {showGame ? 'Drop discs and connect four in a row to win!' : 'Join the lobby to start playing with friends!'}
           </p>
         </div>
 
-        {/* Game Board */}
-        <GameBoard />
+        {/* Main Content */}
+        {showGame && currentGameId ? (
+          <MultiplayerGameBoard 
+            gameId={currentGameId} 
+            onBackToLobby={handleBackToLobby}
+          />
+        ) : (
+          <LobbyScreen onStartGame={handleStartGame} />
+        )}
 
         {/* Footer */}
         <div className="text-center mt-16">

@@ -7,6 +7,33 @@ export const useAuth = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const handleUserSignIn = async (authUser: User) => {
+    // Create or update user profile
+    await supabase
+      .from('profiles')
+      .upsert({
+        id: authUser.id,
+        username: authUser.email?.split('@')[0] || 'User',
+        is_online: true,
+        last_seen: new Date().toISOString(),
+      }, {
+        onConflict: 'id'
+      });
+  };
+
+  const handleUserSignOut = async (userId?: string) => {
+    if (userId || user) {
+      // Set user offline
+      await supabase
+        .from('profiles')
+        .update({
+          is_online: false,
+          last_seen: new Date().toISOString(),
+        })
+        .eq('id', userId || user!.id);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -14,6 +41,17 @@ export const useAuth = () => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Handle profile creation and online status
+        if (session?.user && event === 'SIGNED_IN') {
+          setTimeout(() => {
+            handleUserSignIn(session.user);
+          }, 0);
+        } else if (event === 'SIGNED_OUT') {
+          setTimeout(() => {
+            handleUserSignOut();
+          }, 0);
+        }
       }
     );
 
@@ -22,6 +60,10 @@ export const useAuth = () => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      if (session?.user) {
+        handleUserSignIn(session.user);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -49,6 +91,9 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
+    if (user) {
+      await handleUserSignOut(user.id);
+    }
     const { error } = await supabase.auth.signOut();
     return { error };
   };
