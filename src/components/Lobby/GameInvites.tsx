@@ -27,15 +27,14 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Early exit if no user - don't set up anything
     if (!user) {
-      setInvites([]);
       setLoading(false);
+      setInvites([]);
       return;
     }
 
     const fetchGameInvites = async () => {
-      if (!user) return;
-
       const { data, error } = await supabase
         .from('games')
         .select(`
@@ -45,8 +44,8 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
           status,
           profiles:player1_id (username)
         `)
-        .eq('player2_id', user.id)  // Games where I'm specifically invited
-        .eq('status', 'waiting');   // And still waiting for acceptance
+        .eq('player2_id', user.id)
+        .eq('status', 'waiting');
 
       if (data && !error) {
         setInvites(data.map(game => ({
@@ -59,7 +58,7 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
 
     fetchGameInvites();
 
-    // Fixed subscription: Listen specifically for games where I'm invited
+    // Set up subscription only after confirming user exists
     const channel = supabase
       .channel('my-game-invites')
       .on('postgres_changes', {
@@ -109,6 +108,15 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
       });
     }
   };
+
+  // Show loading state while user is being loaded
+  if (!user) {
+    return (
+      <Card className="p-6">
+        <p className="text-center text-muted-foreground">Loading...</p>
+      </Card>
+    );
+  }
 
   if (loading) {
     return (
