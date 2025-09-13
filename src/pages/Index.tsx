@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { LobbyScreen } from '@/components/Lobby/LobbyScreen';
 import MultiplayerGameBoard from '@/components/ConnectFour/MultiplayerGameBoard';
 import { supabase } from '@/integrations/supabase/client';
-// Import this once you create the tournament component
-// import { TournamentDashboard } from '@/components/Tournament/TournamentDashboard';
+import { TournamentDashboard } from '@/components/Tournament/TournamentDashboard';
+
 
 const Index = () => {
   const { user, signOut } = useAuth();
@@ -144,12 +144,8 @@ const Index = () => {
                 ← Back to Main Menu
               </Button>
             </div>
-            {/* Uncomment this once you create the TournamentDashboard component */}
-            {/* <TournamentDashboard /> */}
-            <div className="text-center p-8 bg-card rounded-lg">
-              <h2 className="text-2xl font-bold mb-4">🏆 Tournament Dashboard</h2>
-              <p className="text-muted-foreground">Tournament system ready for implementation!</p>
-            </div>
+            <TournamentDashboard />
+
           </div>
         ) : (
           <LobbyScreen onStartGame={handleStartGame} />
