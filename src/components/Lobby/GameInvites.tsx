@@ -27,6 +27,12 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    if (!user) {
+      setInvites([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchGameInvites = async () => {
       if (!user) return;
 

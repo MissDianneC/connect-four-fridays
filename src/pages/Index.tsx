@@ -24,7 +24,7 @@ const Index = () => {
   const checkAdminStatus = async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)

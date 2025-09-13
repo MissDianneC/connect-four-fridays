@@ -79,7 +79,7 @@ export const TournamentDashboard = () => {
   }, [selectedTournament]);
 
   const loadTournaments = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('tournaments')
       .select(`
         *,
@@ -98,7 +98,7 @@ export const TournamentDashboard = () => {
   };
 
   const loadAvailableUsers = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('profiles')
       .select('id, username, is_online')
       .eq('is_admin', false)
@@ -111,7 +111,7 @@ export const TournamentDashboard = () => {
 
   const loadTournamentDetails = async (tournamentId: string) => {
     // Load participants
-    const { data: participantData } = await supabase
+    const { data: participantData } = await (supabase as any)
       .from('tournament_participants')
       .select(`
         *,
@@ -125,7 +125,7 @@ export const TournamentDashboard = () => {
     }
 
     // Load matches
-    const { data: matchData } = await supabase
+    const { data: matchData } = await (supabase as any)
       .from('tournament_matches')
       .select(`
         *,
@@ -148,7 +148,7 @@ export const TournamentDashboard = () => {
     const bracketSizeNum = parseInt(bracketSize);
     const maxRounds = Math.log2(bracketSizeNum);
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('tournaments')
       .insert({
         name: tournamentName.trim(),
@@ -169,7 +169,7 @@ export const TournamentDashboard = () => {
       });
     } else if (data) {
       // Create bracket structure
-      await supabase.rpc('create_tournament_bracket', {
+      await (supabase as any).rpc('create_tournament_bracket', {
         tournament_id: data.id,
         bracket_size: bracketSizeNum
       });
@@ -190,7 +190,7 @@ export const TournamentDashboard = () => {
   const addParticipant = async (userId: string, position: number) => {
     if (!selectedTournament) return;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('tournament_participants')
       .insert({
         tournament_id: selectedTournament,
@@ -214,7 +214,7 @@ export const TournamentDashboard = () => {
   };
 
   const removeParticipant = async (participantId: string) => {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('tournament_participants')
       .delete()
       .eq('id', participantId);
@@ -239,7 +239,7 @@ export const TournamentDashboard = () => {
   const startTournament = async () => {
     if (!selectedTournament) return;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('tournaments')
       .update({ status: 'active' })
       .eq('id', selectedTournament);
@@ -282,7 +282,7 @@ export const TournamentDashboard = () => {
     }
 
     // Update the tournament match with the game ID
-    const { error: matchError } = await supabase
+    const { error: matchError } = await (supabase as any)
       .from('tournament_matches')
       .update({ 
         game_id: gameData.id,
