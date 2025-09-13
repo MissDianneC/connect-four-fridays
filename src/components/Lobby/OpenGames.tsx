@@ -27,9 +27,14 @@ export const OpenGames = ({ onJoinGame }: OpenGamesProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchOpenGames = async () => {
-      if (!user) return;
+    // Early exit if no user
+    if (!user) {
+      setLoading(false);
+      setOpenGames([]);
+      return;
+    }
 
+    const fetchOpenGames = async () => {
       const { data, error } = await supabase
         .from('games')
         .select(`
@@ -105,6 +110,15 @@ export const OpenGames = ({ onJoinGame }: OpenGamesProps) => {
       });
     }
   };
+
+  // Show loading state while user is being loaded
+  if (!user) {
+    return (
+      <Card className="p-6">
+        <p className="text-center text-muted-foreground">Loading...</p>
+      </Card>
+    );
+  }
 
   if (loading) {
     return (
