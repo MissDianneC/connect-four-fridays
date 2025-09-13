@@ -22,6 +22,13 @@ export const UsersList = ({ onInviteUser }: UsersListProps) => {
   const { user } = useAuth();
 
   useEffect(() => {
+    // Early exit if no user
+    if (!user) {
+      setLoading(false);
+      setProfiles([]);
+      return;
+    }
+
     const fetchOnlineUsers = async () => {
       const { data, error } = await supabase
         .from('profiles')
@@ -52,10 +59,19 @@ export const UsersList = ({ onInviteUser }: UsersListProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
+
+  // Show loading state while user is being loaded
+  if (!user) {
+    return (
+      <Card className="p-6">
+        <p className="text-center text-muted-foreground">Loading...</p>
+      </Card>
+    );
+  }
 
   const onlineUsers = profiles.filter(profile => 
-    profile.is_online && profile.id !== user?.id
+    profile.is_online && profile.id !== user.id
   );
 
   if (loading) {
