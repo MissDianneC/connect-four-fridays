@@ -39,8 +39,8 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
           status,
           profiles:player1_id (username)
         `)
-        .eq('status', 'waiting')
-        .eq('player2_id', user.id);
+        .eq('player2_id', user.id)  // Games where I'm specifically invited
+        .eq('status', 'waiting');   // And still waiting for acceptance
 
       if (data && !error) {
         setInvites(data.map(game => ({
@@ -53,13 +53,22 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
 
     fetchGameInvites();
 
-    // Subscribe to real-time updates for games
+    // Fixed subscription: Listen specifically for games where I'm invited
     const channel = supabase
-      .channel('games-changes')
+      .channel('my-game-invites')
       .on('postgres_changes', {
-        event: '*',
+        event: 'INSERT',
         schema: 'public',
-        table: 'games'
+        table: 'games',
+        filter: `player2_id=eq.${user.id}`
+      }, () => {
+        fetchGameInvites();
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'games',
+        filter: `player2_id=eq.${user.id}`
       }, () => {
         fetchGameInvites();
       })
