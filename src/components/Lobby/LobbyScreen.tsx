@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { UsersList } from './UsersList';
 import { GameInvites } from './GameInvites';
+import { OpenGames } from './OpenGames';
 
 interface LobbyScreenProps {
   onStartGame: (gameId: string) => void;
@@ -26,6 +27,7 @@ export const LobbyScreen = ({ onStartGame }: LobbyScreenProps) => {
         player1_id: user.id,
         current_turn: user.id, // Player 1 starts as red
         status: 'waiting'
+        // player2_id is null = public game anyone can join
       })
       .select()
       .single();
@@ -96,9 +98,10 @@ export const LobbyScreen = ({ onStartGame }: LobbyScreenProps) => {
         </Button>
       </Card>
 
-      {/* Two column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Three column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <UsersList onInviteUser={handleInviteUser} />
+        <OpenGames onJoinGame={onStartGame} />
         <GameInvites onJoinGame={onStartGame} />
       </div>
     </div>
