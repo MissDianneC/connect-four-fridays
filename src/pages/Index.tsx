@@ -1,13 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { LobbyScreen } from '@/components/Lobby/LobbyScreen';
 import MultiplayerGameBoard from '@/components/ConnectFour/MultiplayerGameBoard';
+import { supabase } from '@/integrations/supabase/client';
+// Import this once you create the tournament component
+// import { TournamentDashboard } from '@/components/Tournament/TournamentDashboard';
 
 const Index = () => {
   const { user, signOut } = useAuth();
   const [currentGameId, setCurrentGameId] = useState<string | null>(null);
   const [showGame, setShowGame] = useState(false);
+  const [showTournaments, setShowTournaments] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (data && !error) {
+      setIsAdmin(data.is_admin || false);
+    }
+    setLoading(false);
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -16,12 +43,33 @@ const Index = () => {
   const handleStartGame = (gameId: string) => {
     setCurrentGameId(gameId);
     setShowGame(true);
+    setShowTournaments(false);
   };
 
   const handleBackToLobby = () => {
     setShowGame(false);
     setCurrentGameId(null);
   };
+
+  const handleShowTournaments = () => {
+    setShowTournaments(true);
+    setShowGame(false);
+    setCurrentGameId(null);
+  };
+
+  const handleBackToMain = () => {
+    setShowTournaments(false);
+    setShowGame(false);
+    setCurrentGameId(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-background flex items-center justify-center">
+        <div className="text-2xl font-bold text-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-background py-8 px-4">
@@ -39,6 +87,7 @@ const Index = () => {
               <div className="text-right">
                 <p className="text-sm text-muted-foreground mb-2">
                   Welcome, {user?.email}!
+                  {isAdmin && <span className="ml-2 px-2 py-1 bg-yellow-500 text-black text-xs rounded font-bold">ADMIN</span>}
                 </p>
                 <Button 
                   variant="outline" 
@@ -51,9 +100,36 @@ const Index = () => {
             </div>
           </div>
           <p className="text-xl md:text-2xl text-muted-foreground font-medium">
-            {showGame ? 'Drop discs and connect four in a row to win!' : 'Join the lobby to start playing with friends!'}
+            {showGame 
+              ? 'Drop discs and connect four in a row to win!' 
+              : showTournaments 
+                ? 'Manage tournaments for your live streams!'
+                : 'Join the lobby to start playing with friends!'}
           </p>
         </div>
+
+        {/* Navigation */}
+        {!showGame && (
+          <div className="flex justify-center gap-4 mb-8">
+            <Button
+              onClick={handleBackToMain}
+              variant={!showTournaments ? "default" : "outline"}
+              size="lg"
+            >
+              🎮 Casual Games
+            </Button>
+            {isAdmin && (
+              <Button
+                onClick={handleShowTournaments}
+                variant={showTournaments ? "default" : "outline"}
+                size="lg"
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0"
+              >
+                🏆 Tournament Mode
+              </Button>
+            )}
+          </div>
+        )}
 
         {/* Main Content */}
         {showGame && currentGameId ? (
@@ -61,6 +137,20 @@ const Index = () => {
             gameId={currentGameId} 
             onBackToLobby={handleBackToLobby}
           />
+        ) : showTournaments ? (
+          <div className="space-y-4">
+            <div className="flex justify-start">
+              <Button variant="outline" onClick={handleBackToMain}>
+                ← Back to Main Menu
+              </Button>
+            </div>
+            {/* Uncomment this once you create the TournamentDashboard component */}
+            {/* <TournamentDashboard /> */}
+            <div className="text-center p-8 bg-card rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">🏆 Tournament Dashboard</h2>
+              <p className="text-muted-foreground">Tournament system ready for implementation!</p>
+            </div>
+          </div>
         ) : (
           <LobbyScreen onStartGame={handleStartGame} />
         )}
