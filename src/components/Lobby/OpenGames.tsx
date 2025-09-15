@@ -137,7 +137,7 @@ export const OpenGames = ({ onJoinGame }: OpenGamesProps) => {
               <div key={game.id} className="flex items-center justify-between p-3 border rounded-lg bg-blue-50">
                 <div className="space-y-1">
                   <p className="font-medium">
-                    Open Game
+                    Anonymous's Game
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Waiting for Player 2

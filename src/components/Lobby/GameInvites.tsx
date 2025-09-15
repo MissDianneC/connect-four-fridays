@@ -135,7 +135,7 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
               <div key={invite.id} className="flex items-center justify-between p-3 border rounded-lg bg-primary/5">
                 <div className="space-y-1">
                   <p className="font-medium">
-                    You have a game invite!
+                    Anonymous invited you!
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Waiting for your response
