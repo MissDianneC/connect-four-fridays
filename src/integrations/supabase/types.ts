@@ -56,158 +56,21 @@ export type Database = {
       profiles: {
         Row: {
           id: string
-          is_admin: boolean | null
           is_online: boolean | null
           last_seen: string | null
           username: string | null
         }
         Insert: {
           id: string
-          is_admin?: boolean | null
           is_online?: boolean | null
           last_seen?: string | null
           username?: string | null
         }
         Update: {
           id?: string
-          is_admin?: boolean | null
           is_online?: boolean | null
           last_seen?: string | null
           username?: string | null
-        }
-        Relationships: []
-      }
-      tournament_matches: {
-        Row: {
-          created_at: string
-          game_id: string | null
-          id: string
-          match_number: number
-          player1_id: string | null
-          player2_id: string | null
-          round: number
-          status: string
-          tournament_id: string
-          updated_at: string
-          winner_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          game_id?: string | null
-          id?: string
-          match_number: number
-          player1_id?: string | null
-          player2_id?: string | null
-          round: number
-          status?: string
-          tournament_id: string
-          updated_at?: string
-          winner_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          game_id?: string | null
-          id?: string
-          match_number?: number
-          player1_id?: string | null
-          player2_id?: string | null
-          round?: number
-          status?: string
-          tournament_id?: string
-          updated_at?: string
-          winner_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tournament_matches_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tournament_matches_tournament_id_fkey"
-            columns: ["tournament_id"]
-            isOneToOne: false
-            referencedRelation: "tournaments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tournament_participants: {
-        Row: {
-          bracket_position: number
-          id: string
-          joined_at: string
-          status: string
-          tournament_id: string
-          user_id: string
-        }
-        Insert: {
-          bracket_position: number
-          id?: string
-          joined_at?: string
-          status?: string
-          tournament_id: string
-          user_id: string
-        }
-        Update: {
-          bracket_position?: number
-          id?: string
-          joined_at?: string
-          status?: string
-          tournament_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tournament_participants_tournament_id_fkey"
-            columns: ["tournament_id"]
-            isOneToOne: false
-            referencedRelation: "tournaments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tournaments: {
-        Row: {
-          admin_id: string
-          bracket_size: number
-          created_at: string
-          current_round: number | null
-          description: string | null
-          id: string
-          max_rounds: number
-          name: string
-          status: string
-          updated_at: string
-          winner_id: string | null
-        }
-        Insert: {
-          admin_id: string
-          bracket_size: number
-          created_at?: string
-          current_round?: number | null
-          description?: string | null
-          id?: string
-          max_rounds: number
-          name: string
-          status?: string
-          updated_at?: string
-          winner_id?: string | null
-        }
-        Update: {
-          admin_id?: string
-          bracket_size?: number
-          created_at?: string
-          current_round?: number | null
-          description?: string | null
-          id?: string
-          max_rounds?: number
-          name?: string
-          status?: string
-          updated_at?: string
-          winner_id?: string | null
         }
         Relationships: []
       }
@@ -216,14 +79,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      calculate_max_rounds: {
-        Args: { bracket_size: number }
-        Returns: number
-      }
-      create_tournament_bracket: {
-        Args: { bracket_size: number; tournament_id: string }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

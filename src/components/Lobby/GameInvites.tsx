@@ -37,12 +37,21 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
     const fetchGameInvites = async () => {
       const { data, error } = await supabase
         .from('games')
-        .select('id, player1_id, player2_id, status')
+        .select(`
+          id,
+          player1_id,
+          player2_id,
+          status,
+          profiles:player1_id (username)
+        `)
         .eq('player2_id', user.id)
         .eq('status', 'waiting');
 
       if (data && !error) {
-        setInvites(data);
+        setInvites(data.map(game => ({
+          ...game,
+          player1_profile: game.profiles as any
+        })));
       }
       setLoading(false);
     };
@@ -135,7 +144,7 @@ export const GameInvites = ({ onJoinGame }: GameInvitesProps) => {
               <div key={invite.id} className="flex items-center justify-between p-3 border rounded-lg bg-primary/5">
                 <div className="space-y-1">
                   <p className="font-medium">
-                    Anonymous invited you!
+                    {invite.player1_profile?.username || 'Anonymous'} invited you!
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Waiting for your response
