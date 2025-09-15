@@ -37,23 +37,14 @@ export const OpenGames = ({ onJoinGame }: OpenGamesProps) => {
     const fetchOpenGames = async () => {
       const { data, error } = await supabase
         .from('games')
-        .select(`
-          id,
-          player1_id,
-          status,
-          created_at,
-          profiles:player1_id (username)
-        `)
+        .select('id, player1_id, status, created_at')
         .eq('status', 'waiting')
         .is('player2_id', null)        // No player 2 yet (public game)
         .neq('player1_id', user.id)    // Not my own game
         .order('created_at', { ascending: false });
 
       if (data && !error) {
-        setOpenGames(data.map(game => ({
-          ...game,
-          player1_profile: game.profiles as any
-        })));
+        setOpenGames(data);
       }
       setLoading(false);
     };
@@ -146,7 +137,7 @@ export const OpenGames = ({ onJoinGame }: OpenGamesProps) => {
               <div key={game.id} className="flex items-center justify-between p-3 border rounded-lg bg-blue-50">
                 <div className="space-y-1">
                   <p className="font-medium">
-                    {game.player1_profile?.username || 'Anonymous'}'s Game
+                    Open Game
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Waiting for Player 2
